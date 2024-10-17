@@ -14,7 +14,7 @@ import org.bukkit.util.StringUtil
 
 class BaseCommand(private val plugin: CommandToItem) : CommandExecutor, TabCompleter {
 
-    private var nameCache: MutableList<String> = mutableListOf()
+    private val nameCache: MutableList<String> = mutableListOf()
     private val maxAllowedItems = Int.MAX_VALUE
 
     override fun onCommand(sender: CommandSender, cmd: Command, label: String, args: Array<out String>): Boolean {
@@ -166,7 +166,8 @@ class BaseCommand(private val plugin: CommandToItem) : CommandExecutor, TabCompl
     }
 
     private fun refreshNameCache() {
-        nameCache = plugin.items.map { it.id }.toMutableList()
+        nameCache.clear()
+        nameCache.addAll(plugin.items.map { it.id })
     }
 
     private fun getItemByName(name: String): Item? {
