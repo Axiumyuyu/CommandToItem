@@ -2,7 +2,7 @@ name: CommandToItem
 version: 1.0.0
 main: me.axiumyu.CommandToItem
 author: LMBishop(origin), Axiumyu(rewrite)
-description: This is a fork of CommandToItem plugin, use Kotlin to rewrite it by Axiumyu, Removed multi version support.
+description: This is a fork of CommandToItem plugin, use maven and Kotlin to rewrite it by Axiumyu, Removed multi version support.
 api-version: "1.21"
 libraries:
   - 'org.jetbrains.kotlin:kotlin-stdlib:2.0.0'
