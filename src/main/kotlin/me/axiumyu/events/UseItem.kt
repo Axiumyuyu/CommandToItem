@@ -13,7 +13,7 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
 
 class UseItem(private val plugin: CommandToItem) : Listener {
-
+//
     @EventHandler
     fun onPlayerUse(event: PlayerInteractEvent) {
         val player: Player = event.player

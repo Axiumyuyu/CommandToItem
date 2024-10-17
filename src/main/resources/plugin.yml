@@ -6,6 +6,7 @@ description: This is a fork of CommandToItem plugin, use maven and Kotlin to rew
 api-version: "1.21"
 libraries:
   - 'org.jetbrains.kotlin:kotlin-stdlib:2.0.0'
+
 commands:
   commandtoitem:
     description: Main command for CommandToItem

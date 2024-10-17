@@ -15,7 +15,7 @@ import java.io.IOException
 class CommandToItem : JavaPlugin() {
 
     val items = mutableListOf<Item>()
-
+//
     override fun onEnable() {
         val directory = File(dataFolder.toString())
         if (!directory.exists() && !directory.isDirectory) {

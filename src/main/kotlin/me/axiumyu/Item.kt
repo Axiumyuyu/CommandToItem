@@ -48,7 +48,7 @@ class Item(val id: String, val itemStack: ItemStack,val commands: List<String>,v
         }
 
     }
-
+//
     fun sendMessages(player: Player) {
         for (message in messages) {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', message

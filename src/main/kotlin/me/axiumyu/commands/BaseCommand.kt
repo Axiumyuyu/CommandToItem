@@ -13,7 +13,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.util.StringUtil
 
 class BaseCommand(private val plugin: CommandToItem) : CommandExecutor, TabCompleter {
-
+//
     private val nameCache: MutableList<String> = mutableListOf()
     private val maxAllowedItems = Int.MAX_VALUE
 
