@@ -17,7 +17,6 @@ class UseItem(private val plugin: CommandToItem) : Listener {
     @EventHandler
     fun onPlayerUse(event: PlayerInteractEvent) {
         val player: Player = event.player
-
         if (event.item != null && event.item?.type != Material.AIR) {
             val itemInHand: ItemStack = player.inventory.itemInMainHand
 
