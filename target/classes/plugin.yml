@@ -1,0 +1,20 @@
+name: CommandToItem
+
+# This will be replaced with the property "version" in build.gradle upon build.
+version: 1.0.0
+
+main: me.axiumyu.CommandToItem
+author: LMBishop
+api-version: "1.21"  # enables the new material thing even though the plugin fully supports 1.8
+libraries:
+  - 'org.jetbrains.kotlin:kotlin-stdlib:2.0.0'
+commands:
+  commandtoitem:
+    description: Main command for CommandToItem
+    usage: /commandtoitem
+    permission: commandtoitem.admin
+    aliases: [cti]
+
+permissions:
+  commandtoitem.admin:
+    description: Permission for the base command
