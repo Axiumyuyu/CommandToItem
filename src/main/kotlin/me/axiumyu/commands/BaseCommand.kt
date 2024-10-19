@@ -1,7 +1,11 @@
 package me.axiumyu.commands
 
 import me.axiumyu.CommandToItem
-import me.axiumyu.Item
+import me.axiumyu.CommandToItem.Companion.cItems
+import me.axiumyu.CItem
+import me.axiumyu.utlis.Legacy2MiniMessage.replaceColor
+import me.axiumyu.utlis.Message
+import me.axiumyu.utlis.Message.Companion.getMessage
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor.*
 import org.bukkit.command.Command
@@ -22,9 +26,9 @@ class BaseCommand(private val plugin: CommandToItem) : CommandExecutor, TabCompl
             if (args.isNotEmpty()) {
                 when (args[0]) {
                     "list" -> {
-                        val ids = plugin.items.map { it.id }
+                        val ids = cItems.map { it.id }
                         sender.sendMessage(
-                            plugin.getMessage(CommandToItem.Message.ITEM_LIST)
+                            getMessage(Message.ITEM_LIST)
                                 .replace("%items%", ids.joinToString(", "))
                         )
                         return true
@@ -33,7 +37,7 @@ class BaseCommand(private val plugin: CommandToItem) : CommandExecutor, TabCompl
                     "reload" -> {
                         plugin.reloadConfig()
                         refreshNameCache()
-                        sender.sendMessage(plugin.getMessage(CommandToItem.Message.RELOAD))
+                        sender.sendMessage(getMessage(Message.RELOAD))
                         return true
                     }
                 }
@@ -45,7 +49,7 @@ class BaseCommand(private val plugin: CommandToItem) : CommandExecutor, TabCompl
                 }
 
                 if (target == null) {
-                    sender.sendMessage(plugin.getMessage(CommandToItem.Message.PLAYER_NOT_FOUND))
+                    sender.sendMessage(getMessage(Message.PLAYER_NOT_FOUND))
                     return true
                 }
 
@@ -54,14 +58,14 @@ class BaseCommand(private val plugin: CommandToItem) : CommandExecutor, TabCompl
                 val item = getItemByName(args[0])
                 if (item == null) {
                     sender.sendMessage(
-                        plugin.getMessage(CommandToItem.Message.ITEM_NOT_FOUND).replace("%item%", args[0])
+                        getMessage(Message.ITEM_NOT_FOUND).replace("%item%", args[0])
                     )
                     return true
                 }
 
                 if (amount > maxAllowedItems || amount < 1) {
                     sender.sendMessage(
-                        plugin.getMessage(CommandToItem.Message.ITEM_LIMITS).replace("%min%", "1")
+                        getMessage(Message.ITEM_LIMITS).replace("%min%", "1")
                             .replace("%max%", maxAllowedItems.toString())
                     )
                     return true
@@ -73,7 +77,7 @@ class BaseCommand(private val plugin: CommandToItem) : CommandExecutor, TabCompl
                         amount, target, itemStack
                     )) {
                     sender.sendMessage(
-                        plugin.getMessage(CommandToItem.Message.FULL_INV).replace("%player%", target.name)
+                        getMessage(Message.FULL_INV).replace("%player%", target.name)
                     )
                     return true
                 }
@@ -92,14 +96,14 @@ class BaseCommand(private val plugin: CommandToItem) : CommandExecutor, TabCompl
                 if (plugin.config.getBoolean("options.show-receive-message", true)) {
                     if (lostItems > 0) {
                         target.sendMessage(
-                            plugin.getMessage(CommandToItem.Message.RECEIVE_ITEM_INVENTORY_FULL)
+                            getMessage(Message.RECEIVE_ITEM_INVENTORY_FULL)
                                 .replace("%item%", item.itemStack.displayName().toString())
                                 .replace("%given_amount%", amount.toString())
                                 .replace("%dropped_amount%", lostItems.toString())
                         )
                     } else {
                         target.sendMessage(
-                            plugin.getMessage(CommandToItem.Message.RECEIVE_ITEM)
+                            getMessage(Message.RECEIVE_ITEM)
                                 .replace("%player%", target.name)
                                 .replace("%item%", item.itemStack.displayName().toString())
                                 .replace("%amount%", amount.toString())
@@ -108,7 +112,7 @@ class BaseCommand(private val plugin: CommandToItem) : CommandExecutor, TabCompl
                 }
 
                 sender.sendMessage(
-                    plugin.getMessage(CommandToItem.Message.GIVE_ITEM)
+                    getMessage(Message.GIVE_ITEM)
                         .replace("%player%", target.name)
                         .replace("%item%", item.itemStack.displayName().toString())
                         .replace("%amount%", amount.toString())
@@ -167,11 +171,11 @@ class BaseCommand(private val plugin: CommandToItem) : CommandExecutor, TabCompl
 
     private fun refreshNameCache() {
         nameCache.clear()
-        nameCache.addAll(plugin.items.map { it.id })
+        nameCache.addAll(cItems.map { it.id })
     }
 
-    private fun getItemByName(name: String): Item? {
-        return plugin.items.find { it.id == name }
+    private fun getItemByName(name: String): CItem? {
+        return cItems.find { it.id == name }
     }
 
     private fun canAddItems(amount: Int, target: Player, itemToAdd: ItemStack): Boolean {

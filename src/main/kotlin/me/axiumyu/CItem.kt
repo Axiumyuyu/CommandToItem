@@ -1,19 +1,15 @@
 package me.axiumyu
-import io.papermc.paper.command.brigadier.argument.ArgumentTypes.gameMode
 import me.clip.placeholderapi.PlaceholderAPI
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
-import org.bukkit.Location
 import org.bukkit.Sound
-import org.bukkit.entity.Bat
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import java.awt.Component
 
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-class Item(val id: String, val itemStack: ItemStack,val commands: List<String>,val messages: List<String>,val consumed: Boolean,val cooldown: Int,val sound: String,val permissionRequired: Boolean) {
+class CItem(val id: String, val itemStack: ItemStack, val commands: List<String>, val messages: List<String>, val consumed: Boolean, val cooldown: Int, val sound: String, val permissionRequired: Boolean,val maxStackSize: Int) {
 
     private val cooldowns: HashMap<UUID, Long> = HashMap()
 

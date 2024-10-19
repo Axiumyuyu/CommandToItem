@@ -2,9 +2,9 @@ package me.axiumyu.utlis
 
 import io.papermc.paper.registry.RegistryAccess.registryAccess
 import io.papermc.paper.registry.RegistryKey.ENCHANTMENT
-import me.axiumyu.utlis.LegacyColor2MiniMessage.replaceColor
+import me.axiumyu.CommandToItem.Companion.mm
+import me.axiumyu.utlis.Legacy2MiniMessage.replaceColor
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.attribute.Attribute
@@ -21,32 +21,27 @@ import kotlin.random.Random
 object ItemParser {
 
     fun parseItem(path: String, config: FileConfiguration, plugin: JavaPlugin): ItemStack {
-        val mn = MiniMessage.miniMessage()
-        val cName = config.getString("$path.name", "empty name")
-        val cType = config.getString("$path.item", "STONE")
-        val hasCustomModelData = config.contains("$path.custommodeldata")
-        val customModelData = config.getInt("$path.custommodeldata", 0)
-        val unbreakable = config.getBoolean("$path.unbreakable", false)
+        val cName = config.getString("$path.name")?:"empty name"
+        val cType = config.getString("$path.item")?:"STONE"
         val cLore = config.getStringList("$path.lore")
         val cItemFlags = config.getStringList("$path.itemflags")
-        val hasAttributeModifiers = config.contains("$path.attributemodifiers")
-        val cAttributeModifiers = config.getMapList("$path.attributemodifiers")
 
         // material
-        val type: Material = runCatching { Material.valueOf(cType ?: "STONE") }.getOrDefault(Material.STONE)
+        val type = Material.getMaterial(cType) ?: Material.STONE
 
         val itemStack = ItemStack(type)
         itemStack.editMeta {
-            it.lore(cLore.map<String, Component> { mn.deserialize(it.replaceColor()) })
-            it.displayName(mn.deserialize(cName ?: "empty name".replaceColor()))
+            it.lore(cLore.map<String, Component> { mm.deserialize(it.replaceColor()) })
+            it.displayName(mm.deserialize(cName.replaceColor()))
 
             // custom model data
-            if (hasCustomModelData) {
-                it.setCustomModelData(customModelData)
+            if (config.contains("$path.custommodeldata")) {
+                it.setCustomModelData(config.getInt("$path.custommodeldata", 0))
             }
 
             // attribute modifiers
-            if (hasAttributeModifiers) {
+            if (config.contains("$path.attributemodifiers")) {
+                val cAttributeModifiers = config.getMapList("$path.attributemodifiers")
                 for (attr in cAttributeModifiers) {
                     val cAttribute = attr["attribute"] as String
                     val attribute = Attribute.entries.find { it.toString() == cAttribute } ?: continue
@@ -61,10 +56,9 @@ object ItemParser {
                     val cEquipmentSlotGroup = configurationSection["equipmentslot"] as String? ?: "ANY"
                     val split = cNameSpace.split(":")
                     val namespace = NamespacedKey(split[0], split[1])
-                    val equipmentSlotGroup = EquipmentSlotGroup.getByName(cEquipmentSlotGroup) ?: EquipmentSlotGroup.ANY
-                    val operation =
-                        runCatching { AttributeModifier.Operation.valueOf(cModifierOperation) }
-                            .getOrDefault(AttributeModifier.Operation.ADD_NUMBER)
+                    val equipmentSlotGroup = EquipmentSlotGroup.getByName(cEquipmentSlotGroup)!!
+                    val operation = AttributeModifier.Operation.valueOf(cModifierOperation)
+
 
                     val modifier = AttributeModifier(namespace, cAmount, operation, equipmentSlotGroup)
                     it.addAttributeModifier(attribute, modifier)
@@ -78,7 +72,14 @@ object ItemParser {
                 }
             }
             // unbreakable
-            it.isUnbreakable = unbreakable
+            it.isUnbreakable = config.getBoolean("$path.unbreakable", false)
+
+            // max stack size
+            if (config.isSet("$path.maxstack")) {
+                if (config.getInt("$path.maxstack") <= 99 && config.getInt("$path.maxstack") > 0) {
+                    it.setMaxStackSize(config.getInt("$path.maxstack"))
+                }
+            }
 
             // enchantments
             if (config.isSet("$path.enchantments")) {
@@ -88,11 +89,10 @@ object ItemParser {
                         plugin.logger.warning("Enchantment does not follow format {namespace}:{name}:{level} : $key")
                         continue
                     }
-                    val levelName = if (split.size >= 3) split[2] else "1"
                     val namespacedKey = NamespacedKey(split[0], split[1])
                     val enchantment =
                         registryAccess().getRegistry(ENCHANTMENT).get(namespacedKey) ?: Enchantment.PROTECTION
-                    val level = levelName.toIntOrNull() ?: 1
+                    val level = split[2].toIntOrNull() ?: 1
                     it.addEnchant(enchantment, level, true)
                 }
             }
