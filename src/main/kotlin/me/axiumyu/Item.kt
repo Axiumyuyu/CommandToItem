@@ -8,6 +8,7 @@ import org.bukkit.Sound
 import org.bukkit.entity.Bat
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import java.awt.Component
 
 import java.util.UUID
 import java.util.concurrent.TimeUnit
@@ -53,7 +54,7 @@ class Item(val id: String, val itemStack: ItemStack,val commands: List<String>,v
         for (message in messages) {
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', message
                     .replace("%player%", player.name)
-                    .replace("%item%", itemStack.itemMeta?.displayName ?: "")
+                    .replace("%item%", itemStack.displayName().toString())
                     .replace("%cooldown%", getCooldownFor(player).toString())))
         }
     }

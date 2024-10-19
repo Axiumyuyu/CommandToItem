@@ -22,7 +22,6 @@ class UseItem(private val plugin: CommandToItem) : Listener {
 
             val item: Item? = plugin.items.find { it.compare(itemInHand) }
 
-
             if (item == null) return
             event.isCancelled = true
 

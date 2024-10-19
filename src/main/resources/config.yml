@@ -7,6 +7,7 @@
 #  - Wiki: https://github.com/LMBishop/CommandToItem/wiki/Configuration
 
 # List items here
+# 根据新版的API，namespace需要替换为命名空间，格式为 <NameSpace>:<Name>
 items:
   weed:
     # Name & type of item
@@ -103,7 +104,7 @@ items:
     attributemodifiers:
       - attribute: GENERIC_MOVEMENT_SPEED # list -> https://hub.spigotmc.org/javadocs/spigot/org/bukkit/attribute/Attribute.html
         modifier:
-          uuid: "49dc07dc-bfdb-4dc7-85d3-66ef52b51858" # uuid (/MUST/ BE UNIQUE! - https://www.uuidgenerator.net/)
+          namespace: "49dc07dc-bfdb-4dc7:85d3-66ef52b51858" # namespace (/MUST/ BE UNIQUE! - https://www.namespacegenerator.net/)
             # if unspecified, items will not work through restarts as a
           # random one is generated each time the plugin is loaded
           name: "generic.movementSpeed"
@@ -112,7 +113,7 @@ items:
           equipmentslot: HAND # (optional) list -> https://hub.spigotmc.org/javadocs/spigot/org/bukkit/inventory/EquipmentSlot.html
       - attribute: GENERIC_MOVEMENT_SPEED
         modifier:
-          uuid: "e22513cf-b15f-4443-9e2f-103c0ff9731b" # as said before, unique to the previous one
+          namespace: "e22513cf-b15f-4443:9e2f-103c0ff9731b"
           name: "generic.movementSpeed"
           operation: ADD_NUMBER
           amount: 0.01

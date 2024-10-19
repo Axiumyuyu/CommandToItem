@@ -3,9 +3,8 @@ package me.axiumyu
 import com.google.common.io.ByteStreams
 import me.axiumyu.commands.BaseCommand
 import me.axiumyu.events.UseItem
-import org.bukkit.ChatColor
-import org.bukkit.Material
-import org.bukkit.inventory.ItemStack
+import me.axiumyu.utlis.ItemParser
+import me.axiumyu.utlis.LegacyColor2MiniMessage.replaceColor
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 import java.io.FileOutputStream
@@ -32,12 +31,12 @@ class CommandToItem : JavaPlugin() {
                     }
                 } ?: run {
                     logger.severe("Failed to create config.yml.")
-                    logger.severe("${ChatColor.RED}...please delete the CommandToItem directory and try RESTARTING (not reloading).")
+                    logger.severe("please delete the CommandToItem directory and try RESTARTING (not reloading).")
                 }
             } catch (e: IOException) {
                 logger.severe("Failed to create config.yml.")
                 e.printStackTrace()
-                logger.severe("${ChatColor.RED}...please delete the CommandToItem directory and try RESTARTING (not reloading).")
+                logger.severe("please delete the CommandToItem directory and try RESTARTING (not reloading).")
             }
         }
 
@@ -48,7 +47,7 @@ class CommandToItem : JavaPlugin() {
     }
 
     fun getMessage(message: Message): String {
-        return config.getString("messages.${message.id}", message.def)?.let { ChatColor.translateAlternateColorCodes('&', it) }?:""
+        return config.getString("messages.${message.id}", message.def)?.replaceColor()?:""
     }
 
     override fun reloadConfig() {
@@ -56,7 +55,7 @@ class CommandToItem : JavaPlugin() {
 
         items.clear()
         config.getConfigurationSection("items")?.getKeys(false)?.forEach { s ->
-            val ist = ItemStack(Material.valueOf(config.getString("items.$s.item", "AIR")!!.uppercase()))
+            val ist = ItemParser.parseItem(config.getString("items.$s")!!.uppercase(),config, this)
 
             val consume = config.getBoolean("items.$s.on-use.consume", config.getBoolean("items.$s.consume", true))
 
@@ -74,33 +73,13 @@ class CommandToItem : JavaPlugin() {
 
             val cooldown = config.getInt("items.$s.on-use.cooldown", config.getInt("items.$s.cooldown", 0))
 
-            val sound : String? = config.getString("items.$s.on-use.sound", config.getString("items.$s.sound", "NONE"))
+            val sound : String = config.getString("items.$s.on-use.sound", config.getString("items.$s.sound", "NONE"))?:""
 
             val permissionRequired = config.getBoolean("items.$s.options.permission-required", false)
 
-            items.add(Item(s.replace(" ", "_"), ist, commands, messages, consume, cooldown, sound?:"", permissionRequired))
+            items.add(Item(s.replace(" ", "_"), ist, commands, messages, consume, cooldown, sound, permissionRequired))
         }
     }
-
-//    fun getItems(): List<Item> = items
-
-//    private fun executeVersionSpecificActions() {
-//        val version = try {
-//            Bukkit.getServer().javaClass.getPackage().name.replace(".", ",").split(",")[3]
-//        } catch (e: ArrayIndexOutOfBoundsException) {
-//            logger.warning("Failed to resolve server version - some features will not work!")
-//            itemGetter = ItemGetter_Late_1_8()
-//            return
-//        }
-//
-//        logger.info("Your server is running version $version.")
-//        itemGetter = when {
-//            version.startsWith("v1_7") || version.startsWith("v1_8") || version.startsWith("v1_9")
-//                    || version.startsWith("v1_10") || version.startsWith("v1_11") || version.startsWith("v1_12") -> ItemGetter_Late_1_8()
-//            version.startsWith("v1_13") -> ItemGetter_1_13()
-//            else -> ItemGetterLatest()
-//        }
-//    }
 
     enum class Message(val id: String, val def: String) {
         FULL_INV("full-inv", "&c%player% doesn't have enough space in their inventory!"),
